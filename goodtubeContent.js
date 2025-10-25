@@ -76,14 +76,19 @@
   });
   observer.observe(document.documentElement, { childList: true, subtree: true });
 
-  // --- Anti-freeze helper ---
-    // --- Anti-freeze helper ---
-  // Only intervene while the player reports `ad-showing`, and identify each ad uniquely so
-  // regular videos resume normally once the current ad has been skipped.
-  let lastSkippedAd = '';
+let lastSkippedAd = '';
   setInterval(() => {
     const player = document.querySelector('.html5-video-player');
-    if (!player || !player.classList.contains('ad-showing')) {
+    if (!player) {
+      lastSkippedAd = '';
+      return;
+    }
+
+    const adUi = player.querySelector(
+      '.ytp-ad-player-overlay, .ytp-ad-preview-text, .ytp-ad-preview-container, .ytp-ad-skip-button'
+    );
+
+    if (!player.classList.contains('ad-showing') || !adUi) {
       lastSkippedAd = '';
       return;
     }
@@ -112,4 +117,5 @@
 
   console.log('[GoodTube] Running clean mode — no fetch/XHR interference.');
 })();
+
 
