@@ -77,16 +77,31 @@
   observer.observe(document.documentElement, { childList: true, subtree: true });
 
   // --- Anti-freeze helper ---
+    // --- Anti-freeze helper ---
+  // Only intervene while the player reports `ad-showing`, and identify each ad uniquely so
+  // regular videos resume normally once the current ad has been skipped.
+  let lastSkippedAd = '';
   setInterval(() => {
-    const video = document.querySelector('video');
-    const adShowing = document.querySelector('.ad-showing');
-    if (video && adShowing) {
-      video.muted = true;
-      try {
-        video.currentTime = video.duration || video.currentTime + 9999;
-      } catch {}
+    const player = document.querySelector('.html5-video-player');
+    if (!player || !player.classList.contains('ad-showing')) {
+      lastSkippedAd = '';
+      return;
     }
-  }, 1000);
+
+    const video = player.querySelector('video');
+    if (!video) return;
+
+    const signature = `${video.currentSrc}|${video.duration}`;
+    if (signature && signature === lastSkippedAd) return;
+
+    lastSkippedAd = signature;
+    video.muted = true;
+    try {
+      if (Number.isFinite(video.duration) && video.duration > 0) {
+        video.currentTime = Math.max(video.duration - 0.05, 0);
+      }
+    } catch {}
+  }, 750);
 
   // --- YouTube SPA reload support ---
   window.addEventListener('yt-navigate-finish', () => {
@@ -97,3 +112,4 @@
 
   console.log('[GoodTube] Running clean mode — no fetch/XHR interference.');
 })();
+
