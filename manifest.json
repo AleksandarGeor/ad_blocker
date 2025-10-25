@@ -17,7 +17,7 @@
   "host_permissions": [
     "*://*.youtube.com/*",
     "https://sponsor.ajay.app/*",
-    "*://*/*"                       // ✅ added — needed for fetching EasyList/AdGuard/uBlock filters from GitHub
+    "*://*/*"
   ],
   "background": {
     "service_worker": "background.js"
@@ -54,9 +54,10 @@
       "run_at": "document_idle"
     }
   ],
-  "update_url": "https://clients2.google.com/service/update2/crx",   // (standard placeholder; safe to leave)
+  "update_url": "https://clients2.google.com/service/update2/crx",
   "minimum_chrome_version": "114",
-  "background_update_interval_hours": 24                            // ✅ optional hint for daily fetch scheduling
+  "background_update_interval_hours": 24
 }
+
 
 
